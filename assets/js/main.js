@@ -187,6 +187,38 @@ const SNIPPETS = {
     '  filter = "all"',
     '}))'
   ].join("\n"),
+  packetContract: [
+    'Opcode 0x5F client -> server',
+    '',
+    'U8 option',
+    'if option == 2 then U8 difficulty end',
+    'if option == 5 then U8 taskIndex end',
+    'if option == 7 then U8 pathIndex end',
+    'if option == 8 then U8 taskIndex end',
+    'if option == 9 then U8 difficulty end',
+    'if option == 11 then U8 offerIndex end',
+    'if option in {12,13,14} then U16 slot end',
+    'if option in {15,16} then U16 slot; U16 raceId end'
+  ].join("\n"),
+  clientParseLua: [
+    'registerOpcode(ServerPackets.TaskBoard, function(protocol, msg)',
+    '  local subType = msg:getU8()',
+    '  if subType == 0 then',
+    '    local state = msg:getU8()',
+    '    local difficulty = msg:getU8()',
+    '    -- continue lendo exatamente na ordem enviada pelo servidor',
+    '  end',
+    'end)'
+  ].join("\n"),
+  migrationTemplate: [
+    '1. Escreva o contrato do payload em texto.',
+    '2. Reserve opcode e direcao.',
+    '3. Implemente writer server->client ou client->server.',
+    '4. Implemente parser do outro lado na mesma ordem.',
+    '5. Adicione NetworkGuard/cooldown/range check.',
+    '6. Teste packet curto, packet grande e client sem suporte.',
+    '7. Remova JSON antigo so depois de validar fallback.'
+  ].join("\n"),
   prompt: [
     'Analise este script TFS linha por linha.',
     'Explique onde ele deve ficar, quais eventos registra,',
@@ -204,6 +236,211 @@ function pathRows(rows) {
   return `<div class="path-list">${rows.map(([path, text]) => `
     <div class="path-row"><code>${path}</code><span>${text}</span></div>
   `).join("")}</div>`;
+}
+
+function tableRows(headers, rows) {
+  return `<div class="table-wrap"><table class="data-table">
+    <thead><tr>${headers.map(header => `<th>${header}</th>`).join("")}</tr></thead>
+    <tbody>${rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody>
+  </table></div>`;
+}
+
+function cardGrid(cards) {
+  return `<div class="card-grid">${cards.map(([title, body]) => `
+    <article class="mini-card"><h3>${title}</h3><p>${body}</p></article>
+  `).join("")}</div>`;
+}
+
+const LANGS = ["pt", "en", "es"];
+
+const UI = {
+  pt: {
+    home: "Inicio",
+    tfs: "TFS",
+    otclient: "OTClient",
+    bytes: "Bytes reais",
+    ai: "IA",
+    menu: "Menu",
+    search: "Buscar tutorial...",
+    tutorial: "Tutorial",
+    previous: "Anterior",
+    next: "Proximo",
+    copy: "Copiar",
+    copied: "Copiado",
+    select: "Selecione",
+    languageTitle: "Idiomas",
+    languageLead: "A base tecnica principal esta em PT-BR e cada pagina tem orientacao rapida em ingles e espanhol para leitura internacional.",
+    footer: "Documentacao estatica criada a partir do workspace local em C:/Users/Mateus/Desktop/tutorial, do forge, da wiki oficial do Revscriptsys e dos repos GitHub do projeto.",
+    markdown: "Docs Markdown"
+  },
+  en: {
+    home: "Home",
+    tfs: "TFS",
+    otclient: "OTClient",
+    bytes: "Real bytes",
+    ai: "AI",
+    menu: "Menu",
+    search: "Search tutorial...",
+    tutorial: "Tutorial",
+    previous: "Previous",
+    next: "Next",
+    copy: "Copy",
+    copied: "Copied",
+    select: "Select",
+    languageTitle: "Languages",
+    languageLead: "The main technical body is PT-BR, with quick English and Spanish guidance on every page for international readers.",
+    footer: "Static documentation generated from the local workspace at C:/Users/Mateus/Desktop/tutorial, the forge folder, the official Revscriptsys wiki, and the project GitHub repositories.",
+    markdown: "Markdown docs"
+  },
+  es: {
+    home: "Inicio",
+    tfs: "TFS",
+    otclient: "OTClient",
+    bytes: "Bytes reales",
+    ai: "IA",
+    menu: "Menu",
+    search: "Buscar tutorial...",
+    tutorial: "Tutorial",
+    previous: "Anterior",
+    next: "Siguiente",
+    copy: "Copiar",
+    copied: "Copiado",
+    select: "Seleccione",
+    languageTitle: "Idiomas",
+    languageLead: "La base tecnica principal esta en PT-BR, con orientacion rapida en ingles y espanol en cada pagina para lectores internacionales.",
+    footer: "Documentacion estatica creada desde el workspace local C:/Users/Mateus/Desktop/tutorial, la carpeta forge, la wiki oficial de Revscriptsys y los repositorios GitHub del proyecto.",
+    markdown: "Docs Markdown"
+  }
+};
+
+const NAV_LABELS = {
+  en: {
+    "logica-programacao": "Programming logic",
+    "algoritmos-basicos": "Basic algorithms",
+    "lua-iniciante": "Lua beginner",
+    "cpp-iniciante": "C++ beginner",
+    "como-usar-ia": "Using AI",
+    "tfs-introducao": "TFS introduction",
+    "tfs-estrutura-pastas": "Folder structure",
+    "tfs-revscriptsys": "Revscriptsys",
+    "tfs-actions": "Actions",
+    "tfs-talkactions": "Talkactions",
+    "tfs-creaturescripts": "Creaturescripts",
+    "tfs-globalevents": "Globalevents",
+    "tfs-movements": "Movements",
+    "tfs-spells": "Spells",
+    "tfs-database": "Database",
+    "tfs-debug": "Debug and logs",
+    "otclient-introducao": "OTClient introduction",
+    "otclient-estrutura-pastas": "Client structure",
+    "otclient-modules": "Modules",
+    "otclient-otmod": ".otmod",
+    "otclient-otui": ".otui",
+    "otclient-lua": "Lua in the client",
+    "otclient-criar-janela": "Create a window",
+    "otclient-criar-botao": "Create a button",
+    "otclient-sidebar": "Sidebar",
+    "otclient-comunicacao-server": "Client/server communication",
+    "astra-client": "AstraClient",
+    "network-bytes-reais": "Real-byte network",
+    "comparacao-tfs-canary-crystal": "TFS, Canary and Crystal",
+    "boas-praticas": "Best practices",
+    "relatorio-github": "Reports and logs",
+    "forge-mapa": "Forge map",
+    "sistemas-forge": "Forge systems",
+    "tfs-arquitetura-avancada": "Advanced TFS architecture",
+    "otclient-protocolo-avancado": "Advanced OTClient protocol",
+    "network-opcodes-mapa": "Opcode map",
+    "network-migracao-json-bytes": "JSON to bytes migration",
+    "seguranca-servidor": "Server security",
+    "build-run-debug": "Build, run and debug"
+  },
+  es: {
+    "logica-programacao": "Logica de programacion",
+    "algoritmos-basicos": "Algoritmos basicos",
+    "lua-iniciante": "Lua inicial",
+    "cpp-iniciante": "C++ inicial",
+    "como-usar-ia": "Usar IA",
+    "tfs-introducao": "Introduccion a TFS",
+    "tfs-estrutura-pastas": "Estructura de carpetas",
+    "tfs-revscriptsys": "Revscriptsys",
+    "tfs-actions": "Actions",
+    "tfs-talkactions": "Talkactions",
+    "tfs-creaturescripts": "Creaturescripts",
+    "tfs-globalevents": "Globalevents",
+    "tfs-movements": "Movements",
+    "tfs-spells": "Spells",
+    "tfs-database": "Base de datos",
+    "tfs-debug": "Debug y logs",
+    "otclient-introducao": "Introduccion a OTClient",
+    "otclient-estrutura-pastas": "Estructura del cliente",
+    "otclient-modules": "Modulos",
+    "otclient-otmod": ".otmod",
+    "otclient-otui": ".otui",
+    "otclient-lua": "Lua en el cliente",
+    "otclient-criar-janela": "Crear ventana",
+    "otclient-criar-botao": "Crear boton",
+    "otclient-sidebar": "Sidebar",
+    "otclient-comunicacao-server": "Comunicacion cliente/servidor",
+    "astra-client": "AstraClient",
+    "network-bytes-reais": "Red con bytes reales",
+    "comparacao-tfs-canary-crystal": "TFS, Canary y Crystal",
+    "boas-praticas": "Buenas practicas",
+    "relatorio-github": "Reportes y logs",
+    "forge-mapa": "Mapa del forge",
+    "sistemas-forge": "Sistemas del forge",
+    "tfs-arquitetura-avancada": "Arquitectura avanzada TFS",
+    "otclient-protocolo-avancado": "Protocolo avanzado OTClient",
+    "network-opcodes-mapa": "Mapa de opcodes",
+    "network-migracao-json-bytes": "Migracion JSON a bytes",
+    "seguranca-servidor": "Seguridad del servidor",
+    "build-run-debug": "Build, ejecutar y debug"
+  }
+};
+
+const GROUP_LABELS = {
+  en: {
+    "Fundamentos": "Foundations",
+    "TFS": "TFS",
+    "OTClient e AstraClient": "OTClient and AstraClient",
+    "Arquitetura moderna": "Modern architecture",
+    "Forge avancado": "Advanced forge"
+  },
+  es: {
+    "Fundamentos": "Fundamentos",
+    "TFS": "TFS",
+    "OTClient e AstraClient": "OTClient y AstraClient",
+    "Arquitetura moderna": "Arquitectura moderna",
+    "Forge avancado": "Forge avanzado"
+  }
+};
+
+function getLang() {
+  const params = new URLSearchParams(window.location.search);
+  const queryLang = params.get("lang");
+  const stored = localStorage.getItem("astra-academy-lang");
+  const lang = LANGS.includes(queryLang) ? queryLang : stored;
+  return LANGS.includes(lang) ? lang : "pt";
+}
+
+function t(key) {
+  const lang = getLang();
+  return (UI[lang] && UI[lang][key]) || UI.pt[key] || key;
+}
+
+function navLabel(slug, fallback) {
+  const lang = getLang();
+  return (NAV_LABELS[lang] && NAV_LABELS[lang][slug]) || fallback;
+}
+
+function groupLabel(title) {
+  const lang = getLang();
+  return (GROUP_LABELS[lang] && GROUP_LABELS[lang][title]) || title;
+}
+
+function withLang(url) {
+  const lang = getLang();
+  return lang === "pt" ? url : `${url}?lang=${lang}`;
 }
 
 const PAGES = {
@@ -564,9 +801,229 @@ simplePage(
   "Volte para Modules e aplique o mesmo ciclo de init/terminate."
 );
 
+NAV_GROUPS.push({
+  title: "Forge avancado",
+  items: [
+    ["31", "forge-mapa", "Mapa do forge"],
+    ["32", "sistemas-forge", "Sistemas do forge"],
+    ["33", "tfs-arquitetura-avancada", "Arquitetura TFS avancada"],
+    ["34", "otclient-protocolo-avancado", "Protocolo OTClient avancado"],
+    ["35", "network-opcodes-mapa", "Mapa de opcodes"],
+    ["36", "network-migracao-json-bytes", "Migrar JSON para bytes"],
+    ["37", "seguranca-servidor", "Seguranca do servidor"],
+    ["38", "build-run-debug", "Build, run e debug"]
+  ]
+});
+
+PAGES["tfs-revscriptsys"].sections.push(
+  ["Referencia oficial resumida", tableRows(
+    ["Metatable", "Quando usar", "Callbacks/metodos importantes"],
+    [
+      ["<code>Action()</code>", "Item usado pelo player.", "<code>onUse</code>, <code>id</code>, <code>aid</code>, <code>uid</code>, <code>allowFarUse</code>, <code>blockWalls</code>, <code>checkFloor</code>"],
+      ["<code>CreatureEvent(\"name\")</code>", "Login, logout, kill, death, modal, text edit e extended opcode.", "<code>onLogin</code>, <code>onKill</code>, <code>onDeath</code>, <code>onModalWindow</code>, <code>onExtendedOpCode</code>"],
+      ["<code>GlobalEvent(\"name\")</code>", "Startup, shutdown, horario e intervalos globais.", "<code>onStartup</code>, <code>onShutdown</code>, <code>onTime</code>, <code>onThink</code>, <code>interval</code>, <code>time</code>"],
+      ["<code>MoveEvent()</code>", "Pisar, sair, equipar e remover item.", "<code>onStepIn</code>, <code>onStepOut</code>, <code>onEquip</code>, <code>onDeEquip</code>"],
+      ["<code>Spell(\"name\")</code>", "Magias instantaneas e runas.", "<code>onCastSpell</code>, words, vocation, mana, cooldown, level"],
+      ["<code>TalkAction(\"words\")</code>", "Comandos por fala.", "<code>onSay</code>, <code>separator</code>, access/group checks"],
+      ["<code>Weapon(WEAPON_TYPE)</code>", "Armas customizadas.", "Tipo de arma, callbacks de ataque e regras de combate"],
+      ["<code>MonsterType(\"name\")</code>", "Monstro criado por Lua.", "Atributos, loot, attacks, defenses, voices e eventos de monstro"]
+    ]
+  )],
+  ["Padrao de arquivo completo", "<p>Um script RevScriptSys bom tem configuracao no topo, variaveis locais, callbacks pequenos, funcoes auxiliares privadas e <code>:register()</code> no final. Se o sistema precisa de Action + MoveEvent + GlobalEvent, manter no mesmo arquivo pode ser melhor do que espalhar em XML antigo.</p>"],
+  ["Erros que quebram server", "<ul><li>Usar <code>player</code> sem confirmar que existe.</li><li>Retornar <code>false</code> em movement quando queria permitir passagem.</li><li>Criar item temporario com <code>Game.createItem</code> e nao mover nem remover.</li><li>Registrar mesmo item/actionid em dois scripts diferentes.</li><li>Copiar callback de outra versao do TFS com assinatura diferente.</li></ul>"]
+);
+
+PAGES["network-bytes-reais"].sections.push(
+  ["Contrato real do Task Board 0x5F", codeBlock("text", "contrato client -> server", SNIPPETS.packetContract)],
+  ["Mapa dos opcodes Astra vistos", tableRows(
+    ["Opcode", "Direcao", "Uso", "Arquivo de referencia"],
+    [
+      ["<code>0x5F</code>", "Client -> server", "Task board action: abrir bounty, weekly, shop, soulseal, trocar dificuldade, comprar oferta.", "<code>data/scripts/network/task_board/init.lua</code> e <code>AstraClient/src/client/protocolgamesend.cpp</code>"],
+      ["<code>0x53</code>", "Server -> client", "Task board data com subtipo bounty, weekly ou hunt shop.", "<code>data/scripts/network/task_board/protocol.lua</code>"],
+      ["<code>0xBA</code>", "Server -> client", "Soul seals: saldo, criaturas, custo, estrelas e mastery.", "<code>data/scripts/network/task_board/protocol.lua</code>"],
+      ["<code>0xEE</code>", "Server -> client", "Resource balance para task hunting, bounty points e soulseals.", "<code>TaskBoard.sendResourceBalance</code>"],
+      ["Extended opcode", "Ambos", "Bom para compatibilidade e prototipo, mas mais pesado quando vira JSON frequente.", "<code>ProtocolGame::parseExtendedOpcode</code>"]
+    ]
+  )],
+  ["Regra de ouro do parser", "<p>Quem escreve bytes define a ordem. Quem le precisa consumir a mesma ordem, mesmo tipo e mesmo tamanho. Se o servidor envia <code>U8, U16, string</code> e o client le <code>U16, U8, string</code>, todo o resto do packet fica deslocado.</p>"]
+);
+
+PAGES["boas-praticas"].sections.push(
+  ["Checklist antes de merge", "<ol><li><code>git status</code> limpo ou entendido.</li><li>Diff revisado arquivo por arquivo.</li><li>Servidor compila quando houve C++.</li><li>Client abre sem erro no log.</li><li>Packet novo testado com payload minimo, maximo e invalido.</li><li>Feature testada com player comum, nao so GOD.</li><li>Documentacao atualizada com opcode, storage, config e caminhos.</li></ol>"],
+  ["Performance no mundo real", "<p>Evite varrer mapa sem necessidade. <code>Game.getSpectators</code> e util, mas em loop quente pode virar custo alto. Para arenas, dungeons, trackers e zonas persistentes, mantenha tabelas atualizadas por eventos de entrada/saida e so recorra a scan quando for inicializar ou reparar estado.</p>"]
+);
+
+PAGES["forge-mapa"] = page(
+  "Mapa do forge",
+  "O forge e o laboratorio: servidores, clients, referencias, relatorios, logs e provas de como a arquitetura real do projeto esta andando.",
+  ["Forge", "Repos", "Auditoria"],
+  [
+    ["Repos principais", tableRows(
+      ["Caminho", "Papel", "O que estudar"],
+      [
+        ["<code>forge/forgottenserver-downgrade-1.8-8.60</code>", "Servidor principal TFS 1.8 downgrade 8.60.", "<code>src/protocolgame.cpp</code>, <code>src/game.cpp</code>, <code>data/scripts/network</code>, <code>data/lib/core</code>"],
+        ["<code>forge/AstraClient</code>", "Client principal do projeto.", "<code>modules/game_protocol/protocol.lua</code>, <code>src/client/protocolgamesend.cpp</code>, <code>src/client/protocolgameparse.cpp</code>"],
+        ["<code>forge/canary</code>", "Referencia moderna de servidor.", "Organizacao, eventos, sistemas recentes e padroes de CMake/testes"],
+        ["<code>forge/crystalserver-main</code>", "Referencia moderna semelhante ao Canary.", "Sistemas modernos e contratos de protocolo"],
+        ["<code>forge/mehah</code>", "Referencia OTClient/Mehah.", "InputMessage, OutputMessage, features e extended opcode"],
+        ["<code>forge/otclientv8 otacademy</code>", "Referencia OTCv8.", "Extended JSON opcode, modules e comportamento de client"],
+        ["<code>Ultralight_-_OTClient</code>", "Referencia visual/site local.", "UI estatica, layout e organizacao de assets"]
+      ]
+    )],
+    ["Relatorios locais", pathRows([["forge/codebase-audit-report.html", "auditoria com 47 findings para guiar risco e prioridade"], ["forge/stress-test-results.html", "stress com 31/31 passando, incluindo NetworkMessage 11/11"], ["forge/AstraClient/otclientv8.log", "log runtime do client"], ["forge/AstraClient/packet.log", "log de packets quando presente"]])],
+    ["Como usar esse mapa", "<p>Quando uma feature falhar, comece pelo repo dono da verdade. Regra de jogo mora no servidor. UI e clique moram no client. Contrato mora nos dois. Documento bom mostra os tres caminhos, nao so um print de tela.</p>"]
+  ]
+);
+
+PAGES["sistemas-forge"] = page(
+  "Sistemas do forge",
+  "Os scripts em data/scripts/network mostram como sistemas grandes foram organizados no servidor: entrada por packet, validacao, modulo de dominio e envio de resposta.",
+  ["Forge", "TFS", "Network"],
+  [
+    ["Inventario de sistemas", tableRows(
+      ["Sistema", "Arquivo/pasta", "Tipo de aprendizado"],
+      [
+        ["Battle Pass", "<code>data/scripts/network/battlepass/battlepass.lua</code>", "Sistema grande com estado, premios e comunicacao com client."],
+        ["Market", "<code>data/scripts/network/market/market.lua</code>", "Payload grande, filtros, compra/venda e risco de validacao."],
+        ["Prey", "<code>data/scripts/network/prey_system/</code>", "Slots, reroll, custo, monstros e estado persistente."],
+        ["Forge", "<code>data/scripts/network/forge/forge.lua</code>", "Feature complexa, custo, item, chance e resposta visual."],
+        ["Wheel", "<code>data/scripts/network/wheel/wheel.lua</code>", "Arvore de pontos, estado e UI sincronizada."],
+        ["Quick Loot", "<code>data/scripts/network/quickloot.lua</code>", "Sistema quente, bom para estudar performance e flags."],
+        ["Task Board", "<code>data/scripts/network/task_board/</code>", "Exemplo mais claro de bytes reais sem JSON pesado."]
+      ]
+    )],
+    ["Padrao de arquitetura", cardGrid([
+      ["Entrada", "Um opcode ou evento chega no servidor. O servidor valida player, client, cooldown e tamanho."],
+      ["Dominio", "O modulo de regra decide custo, recompensa, storage, banco e estado atual."],
+      ["Resposta", "O servidor envia bytes, mensagem ou efeito. O client apenas renderiza o que recebeu."],
+      ["Auditoria", "Toda feature quente precisa logavel, testavel e documentada por contrato."]
+    ])],
+    ["Como portar um sistema", "<ol><li>Leia config e storages.</li><li>Mapeie opcodes e payloads.</li><li>Procure dependencias em <code>data/lib</code>.</li><li>Compare enum/const no C++.</li><li>Teste a feature sem client modificado quando houver fallback.</li><li>So depois ajuste UI.</li></ol>"]
+  ]
+);
+
+PAGES["tfs-arquitetura-avancada"] = page(
+  "Arquitetura TFS avancada",
+  "Para mexer em TFS com seguranca, pense em camadas: protocolo, dispatcher, Game, objetos de dominio, Lua bindings, banco e scripts.",
+  ["TFS", "C++", "Arquitetura"],
+  [
+    ["Camadas", tableRows(
+      ["Camada", "Responsabilidade", "Arquivos para ler"],
+      [
+        ["ProtocolGame", "Transforma bytes do client em chamadas de jogo e escreve respostas.", "<code>src/protocolgame.cpp</code>, <code>src/protocolgame.h</code>"],
+        ["Game", "Orquestra regras centrais e agenda eventos de gameplay.", "<code>src/game.cpp</code>, <code>src/game.h</code>"],
+        ["Player/Creature/Item", "Estado vivo do mundo.", "<code>src/player.cpp</code>, <code>src/creature.cpp</code>, <code>src/item.cpp</code>"],
+        ["Lua bridge", "Expoe C++ para scripts.", "<code>src/luascript.cpp</code>, <code>src/luanetworkmessage.cpp</code>"],
+        ["Scheduler/Dispatcher", "Executa trabalho no tempo ou thread correta.", "<code>src/scheduler.cpp</code>, <code>src/tasks.cpp</code>"],
+        ["Database", "Carrega e persiste dados.", "<code>src/database.cpp</code>, <code>src/iologindata.cpp</code>"]
+      ]
+    )],
+    ["Fluxo de um packet custom", "<p><code>ProtocolGame::parsePacket</code> le o primeiro byte. Se for um packet que o C++ nao trata diretamente, o fork encaminha para <code>Game::parsePlayerNetworkMessage</code>. O evento Lua <code>Player:onNetworkMessage</code> procura <code>PacketHandlers[recvByte]</code> e chama o handler registrado em <code>data/scripts/network</code>.</p>"],
+    ["Thread e seguranca", "<p>Evite fazer regra pesada no lugar errado. Banco, save e operacoes longas precisam respeitar os padroes do projeto. Se o codigo atual usa dispatcher ou thread pool para uma area, siga o mesmo padrao.</p>"],
+    ["Checklist C++", "<ul><li>Assinatura no header e implementacao batem.</li><li>Include minimo e sem dependencia circular.</li><li>Objeto acessado ainda esta vivo.</li><li>NetworkMessage nao le fora do buffer.</li><li>Lua binding valida stack e tipo.</li><li>Erro retorna sem derrubar processo.</li></ul>"]
+  ]
+);
+
+PAGES["otclient-protocolo-avancado"] = page(
+  "Protocolo OTClient avancado",
+  "No client, protocolo bom separa envio, parse, signal e UI. O parser le bytes, emite evento, e o module decide como renderizar.",
+  ["OTClient", "AstraClient", "Protocolo"],
+  [
+    ["Arquivos chave", pathRows([["AstraClient/modules/game_protocol/protocol.lua", "registro de opcodes e parsers Lua"], ["AstraClient/src/client/protocolgamesend.cpp", "envio C++ client -> server"], ["AstraClient/src/client/protocolgameparse.cpp", "parse C++ server -> client"], ["AstraClient/src/client/protocolcodes.h", "constantes de opcodes"], ["modules/gamelib/protocolgame.lua", "referencias OTC/Mehah de extended opcode e features"]])],
+    ["Padrao de parse", codeBlock("lua", "registerOpcode no client", SNIPPETS.clientParseLua)],
+    ["Separacao correta", cardGrid([
+      ["Protocol", "Le bytes, monta tabelas simples e dispara signal."],
+      ["Module", "Escuta signal, atualiza janela e controla botoes."],
+      ["UI", "Define estrutura visual, ids e estilos."],
+      ["State", "Cache pequeno, limpo em onGameEnd/terminate."]
+    ])],
+    ["Erros comuns", "<ul><li>Parser chamar widget diretamente e quebrar quando module nao carregou.</li><li>Registrar opcode duas vezes sem unregister.</li><li>Esquecer de desconectar signal no <code>terminate</code>.</li><li>Client ler <code>U16</code> onde o servidor enviou <code>U8</code>.</li><li>Usar JSON antigo em feature que roda toda hora.</li></ul>"]
+  ]
+);
+
+PAGES["network-opcodes-mapa"] = page(
+  "Mapa de opcodes",
+  "Mapa vivo para documentar cada byte novo. Sem esse mapa, o protocolo vira tentativa e erro.",
+  ["Network", "Opcode", "Documentacao"],
+  [
+    ["Tabela principal", tableRows(
+      ["Opcode", "Nome", "Direcao", "Payload", "Guarda"],
+      [
+        ["<code>0x5F</code>", "TaskBoardAction", "Client -> server", "<code>U8 option</code> + campos opcionais por option.", "<code>player:isUsingAstraClient()</code> + <code>NetworkGuard</code>"],
+        ["<code>0x53</code>", "TaskBoardData", "Server -> client", "<code>U8 subType</code> + bounty/weekly/shop.", "Apenas AstraClient"],
+        ["<code>0xBA</code>", "SoulSeals", "Server -> client", "<code>U32 balance</code>, <code>U16 count</code>, entries.", "Apenas AstraClient"],
+        ["<code>0xEE</code>", "ResourceBalance", "Server -> client", "resource type + amount.", "Apenas AstraClient"],
+        ["<code>0x32</code>", "ExtendedOpcode", "Ambos", "Opcode interno + string buffer.", "OTC/Mehah/compat"]
+      ]
+    )],
+    ["Como adicionar um opcode", "<ol><li>Escolha um valor livre e escreva nome constante.</li><li>Declare direcao e dono.</li><li>Documente payload em ordem.</li><li>Implemente writer.</li><li>Implemente parser.</li><li>Coloque guardas por client e tamanho.</li><li>Teste mismatch de versao.</li></ol>"],
+    ["Formato de documento", codeBlock("text", "template de contrato", SNIPPETS.packetContract)]
+  ]
+);
+
+PAGES["network-migracao-json-bytes"] = page(
+  "Migrar JSON/extended opcode para bytes reais",
+  "A migracao correta nao e trocar encode por addByte. E transformar uma mensagem flexivel em contrato tipado, validado e versionavel.",
+  ["Network", "JSON", "Bytes"],
+  [
+    ["Quando migrar", tableRows(
+      ["Sinal", "Por que importa", "Acao"],
+      [
+        ["Payload frequente", "JSON gera string maior e parse caro.", "Migrar para bytes."],
+        ["Lista grande", "Market, task, wheel e trackers crescem rapido.", "Usar count + campos tipados."],
+        ["Gameplay quente", "Atraso aparece para player.", "Evitar JSON e alocacao desnecessaria."],
+        ["Prototipo raro", "Custo baixo e flexibilidade ajuda.", "JSON ainda pode ficar."],
+        ["Compat legado", "Clients antigos talvez so entendam extended opcode.", "Manter fallback temporario."]
+      ]
+    )],
+    ["Plano de migracao", codeBlock("text", "passos", SNIPPETS.migrationTemplate)],
+    ["Antes e depois", tableRows(
+      ["JSON", "Bytes reais"],
+      [
+        ["<code>{ action: \"buy\", offer: 4 }</code>", "<code>U8 option=11; U8 offerIndex=4</code>"],
+        ["<code>{ difficulty: \"hard\" }</code>", "<code>U8 option=2; U8 difficulty=2</code>"],
+        ["<code>{ slot: 3, raceId: 42 }</code>", "<code>U8 option=15; U16 slot=3; U16 raceId=42</code>"]
+      ]
+    )],
+    ["Teste minimo", "<p>Teste payload vazio, payload curto, payload com bytes extras, valor fora do range, player sem AstraClient, reload de scripts e client desatualizado. O sucesso e o servidor ignorar com seguranca, nao crashar.</p>"]
+  ]
+);
+
+PAGES["seguranca-servidor"] = page(
+  "Seguranca do servidor",
+  "O servidor e a autoridade. Todo dado de client deve ser tratado como sugestao, nunca como verdade.",
+  ["Seguranca", "Anti exploit", "TFS"],
+  [
+    ["Ameacas comuns", tableRows(
+      ["Entrada", "Risco", "Defesa"],
+      [
+        ["Opcode custom", "Packet curto, tipo errado, spam, valor impossivel.", "<code>NetworkGuard</code>, cooldown, ranges e client guard."],
+        ["Item action", "Usar item fora de contexto, alvo invalido, hotkey indevida.", "Validar item, target, posicao, floor, storage e cooldown."],
+        ["Shop/market", "Comprar sem saldo, quantidade negativa, race/item falso.", "Servidor calcula preco e disponibilidade."],
+        ["Database", "SQL injection e save parcial.", "Escape, prepared style quando existir, transacao e rollback."],
+        ["OTClient UI", "Botao escondido nao e permissao.", "Permissao sempre no servidor."]
+      ]
+    )],
+    ["Padrao defensivo", "<ol><li>Retorne cedo quando <code>player</code> for invalido.</li><li>Verifique client/fork quando opcode for exclusivo.</li><li>Limite tamanho antes de ler string.</li><li>Converta numero e aplique min/max.</li><li>Cheque estado atual no servidor.</li><li>Logue erro suspeito sem vazar dado sensivel.</li></ol>"],
+    ["Exemplo seguro", codeBlock("lua", "PacketHandler com NetworkGuard", SNIPPETS.byteHandler)]
+  ]
+);
+
+PAGES["build-run-debug"] = page(
+  "Build, run e debug",
+  "Nao existe documentacao completa sem ciclo de validacao: compilar, rodar, abrir client, testar feature, ler log e revisar diff.",
+  ["Build", "Debug", "Git"],
+  [
+    ["Fluxo recomendado", "<ol><li><code>git status --short --branch</code> antes de mexer.</li><li>Identificar repo certo: server, client ou docs.</li><li>Fazer patch pequeno.</li><li>Compilar quando tocar C++.</li><li>Rodar servidor e client.</li><li>Reproduzir a feature.</li><li>Ler console/log.</li><li>Commitar com mensagem clara.</li></ol>"],
+    ["Logs para olhar", pathRows([["Servidor console", "erros Lua, warnings de script, crash e mensagens de startup"], ["AstraClient/otclientv8.log", "erro de module, OTUI, signal e widget"], ["AstraClient/packet.log", "ordem e conteudo dos packets quando habilitado"], ["forge/stress-test-results.html", "base de comparacao para stress DB/NetworkMessage"], ["GitHub Actions", "build limpo fora da maquina local"]])],
+    ["Git limpo", "<p>O repo <code>Astra-Code-Academy</code> deve manter somente documentacao. Alteracoes em <code>forge/forgottenserver...</code> e <code>forge/AstraClient</code> ja existentes nao devem ser revertidas pela documentacao.</p>"],
+    ["Quando pedir ajuda da IA", "<p>Inclua erro completo, caminho do arquivo, diff atual, versao do fork, packet/opcode quando houver e o comportamento esperado. Pedido bom economiza horas.</p>"]
+  ]
+);
+
 function codeBlock(lang, title, code) {
   const escaped = escapeHtml(code);
-  return `<div class="code-block"><div class="code-title"><span>${title}</span><button class="copy-btn" type="button">Copiar</button></div><pre><code data-lang="${lang}">${escaped}</code></pre></div>`;
+  return `<div class="code-block"><div class="code-title"><span>${title}</span><button class="copy-btn" type="button">${t("copy")}</button></div><pre><code data-lang="${lang}">${escaped}</code></pre></div>`;
 }
 
 function escapeHtml(value) {
@@ -585,26 +1042,55 @@ function flattenNav() {
 }
 
 function pageHref(slug) {
-  return `${prefix()}tutorials/${slug}.html`;
+  return withLang(`${prefix()}tutorials/${slug}.html`);
+}
+
+function homeHref() {
+  return withLang(`${prefix()}index.html`);
+}
+
+function languageHref(lang) {
+  const current = window.location.pathname.split("/").pop() || "index.html";
+  return lang === "pt" ? current : `${current}?lang=${lang}`;
+}
+
+function renderLanguageSwitch() {
+  const current = getLang();
+  return `<div class="language-switch" aria-label="Language">
+    ${LANGS.map(lang => `<a class="lang-link ${current === lang ? "active" : ""}" href="${languageHref(lang)}" data-lang="${lang}">${lang.toUpperCase()}</a>`).join("")}
+  </div>`;
+}
+
+function renderLanguagePanel(slug, data) {
+  const title = navLabel(slug, data.title);
+  return `<section class="language-panel">
+    <h2>${t("languageTitle")}</h2>
+    <p>${t("languageLead")}</p>
+    <div class="summary-grid">
+      <article><strong>PT</strong><p>${data.lead}</p></article>
+      <article><strong>EN</strong><p>${title}: practical Open Tibia notes about ${data.tags.join(", ")}. Read paths, packet contracts, validation rules, and debug checklists before changing code.</p></article>
+      <article><strong>ES</strong><p>${title}: notas practicas de Open Tibia sobre ${data.tags.join(", ")}. Lee rutas, contratos de packet, validaciones y checklists de debug antes de cambiar codigo.</p></article>
+    </div>
+  </section>`;
 }
 
 function renderTopbar(active) {
-  const p = prefix();
   return `
     <header class="topbar">
       <div class="topbar-inner">
-        <a class="brand" href="${p}index.html">
+        <a class="brand" href="${homeHref()}">
           <span class="brand-mark">A</span>
           <span><span class="brand-title">Astra Academy</span><span class="brand-subtitle">Open Tibia docs</span></span>
         </a>
         <nav class="topnav">
-          <a href="${p}index.html" class="${active === "home" ? "active" : ""}">Inicio</a>
-          <a href="${pageHref("tfs-introducao")}" class="${active && active.startsWith("tfs") ? "active" : ""}">TFS</a>
-          <a href="${pageHref("otclient-introducao")}" class="${active && active.startsWith("otclient") ? "active" : ""}">OTClient</a>
-          <a href="${pageHref("network-bytes-reais")}" class="${active === "network-bytes-reais" ? "active" : ""}">Bytes reais</a>
-          <a href="${pageHref("como-usar-ia")}" class="${active === "como-usar-ia" ? "active" : ""}">IA</a>
+          <a href="${homeHref()}" class="${active === "home" ? "active" : ""}">${t("home")}</a>
+          <a href="${pageHref("tfs-introducao")}" class="${active && active.startsWith("tfs") ? "active" : ""}">${t("tfs")}</a>
+          <a href="${pageHref("otclient-introducao")}" class="${active && active.startsWith("otclient") ? "active" : ""}">${t("otclient")}</a>
+          <a href="${pageHref("network-bytes-reais")}" class="${active === "network-bytes-reais" ? "active" : ""}">${t("bytes")}</a>
+          <a href="${pageHref("como-usar-ia")}" class="${active === "como-usar-ia" ? "active" : ""}">${t("ai")}</a>
         </nav>
-        <button class="menu-toggle" type="button" aria-label="Abrir menu">Menu</button>
+        ${renderLanguageSwitch()}
+        <button class="menu-toggle" type="button" aria-label="${t("menu")}">${t("menu")}</button>
       </div>
     </header>
   `;
@@ -613,13 +1099,13 @@ function renderTopbar(active) {
 function renderSidebar(active) {
   return `
     <aside class="sidebar">
-      <input class="sidebar-search" type="search" placeholder="Buscar tutorial..." aria-label="Buscar tutorial">
+      <input class="sidebar-search" type="search" placeholder="${t("search")}" aria-label="${t("search")}">
       ${NAV_GROUPS.map(group => `
         <div class="sidebar-group">
-          <p class="sidebar-title">${group.title}</p>
+          <p class="sidebar-title">${groupLabel(group.title)}</p>
           ${group.items.map(([num, slug, label]) => `
-            <a class="sidebar-link ${active === slug ? "active" : ""}" href="${pageHref(slug)}" data-search="${(label + " " + group.title + " " + slug).toLowerCase()}">
-              <span class="nav-num">${num}</span><span>${label}</span>
+            <a class="sidebar-link ${active === slug ? "active" : ""}" href="${pageHref(slug)}" data-search="${(label + " " + navLabel(slug, label) + " " + group.title + " " + slug).toLowerCase()}">
+              <span class="nav-num">${num}</span><span>${navLabel(slug, label)}</span>
             </a>
           `).join("")}
         </div>
@@ -634,8 +1120,8 @@ function renderFooter() {
     <footer class="footer">
       <div class="footer-inner">
         <strong>Astra Academy</strong>
-        <p>Documentacao estatica criada a partir do workspace local em <code>C:/Users/Mateus/Desktop/tutorial</code>. Fontes externas conferidas: wiki oficial do Revscriptsys e repo/wiki do fork no GitHub.</p>
-        <p><a href="${p}docs/00-introducao.md">Docs Markdown</a> · <a href="https://github.com/otland/forgottenserver/wiki/Revscriptsys">Revscriptsys oficial</a> · <a href="https://github.com/Mateuzkl/forgottenserver-downgrade-1.8-8.60">Fork TFS 1.8 8.60</a></p>
+        <p>${t("footer")}</p>
+        <p><a href="${p}docs/00-introducao.md">${t("markdown")}</a> | <a href="https://github.com/otland/forgottenserver/wiki/Revscriptsys">Revscriptsys oficial</a> | <a href="https://github.com/Mateuzkl/forgottenserver-downgrade-1.8-8.60">Fork TFS 1.8 8.60</a></p>
       </div>
     </footer>
   `;
@@ -646,14 +1132,16 @@ function renderArticle(slug) {
   const article = document.getElementById("article");
   if (!article || !data) return;
 
-  document.title = `${data.title} - Astra Academy`;
+  const displayTitle = navLabel(slug, data.title);
+  document.title = `${displayTitle} - Astra Academy`;
   article.innerHTML = `
     <div class="content-header">
-      <span class="eyebrow">Tutorial</span>
-      <h1>${data.title}</h1>
+      <span class="eyebrow">${t("tutorial")}</span>
+      <h1>${displayTitle}</h1>
       <p>${data.lead}</p>
       <div class="tag-row">${data.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>
     </div>
+    ${renderLanguagePanel(slug, data)}
     ${data.sections.map(([title, html], index) => `
       <section>
         <h2 id="sec-${index + 1}">${title}</h2>
@@ -671,8 +1159,8 @@ function renderPagination(slug) {
   const next = flat[index + 1];
   return `
     <div class="pagination">
-      ${prev ? `<a class="page-link" href="${pageHref(prev.slug)}"><span>Anterior</span><strong>${prev.label}</strong></a>` : "<div></div>"}
-      ${next ? `<a class="page-link next" href="${pageHref(next.slug)}"><span>Proximo</span><strong>${next.label}</strong></a>` : "<div></div>"}
+      ${prev ? `<a class="page-link" href="${pageHref(prev.slug)}"><span>${t("previous")}</span><strong>${navLabel(prev.slug, prev.label)}</strong></a>` : "<div></div>"}
+      ${next ? `<a class="page-link next" href="${pageHref(next.slug)}"><span>${t("next")}</span><strong>${navLabel(next.slug, next.label)}</strong></a>` : "<div></div>"}
     </div>
   `;
 }
@@ -690,10 +1178,10 @@ function initCopyButtons() {
       const text = block ? block.querySelector("code").textContent : "";
       try {
         await navigator.clipboard.writeText(text);
-        button.textContent = "Copiado";
-        setTimeout(() => { button.textContent = "Copiar"; }, 1200);
+        button.textContent = t("copied");
+        setTimeout(() => { button.textContent = t("copy"); }, 1200);
       } catch {
-        button.textContent = "Selecione";
+        button.textContent = t("select");
       }
     });
   });
@@ -721,6 +1209,9 @@ function initMenu() {
 
 function mount() {
   const active = document.body.dataset.page || "home";
+  const lang = getLang();
+  localStorage.setItem("astra-academy-lang", lang);
+  document.documentElement.lang = lang === "pt" ? "pt-BR" : lang;
   document.getElementById("topbar-slot").innerHTML = renderTopbar(active);
   document.getElementById("sidebar-slot").innerHTML = renderSidebar(active);
   const footer = document.getElementById("footer-slot");

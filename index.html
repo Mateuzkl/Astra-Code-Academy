@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Astra Academy - Open Tibia docs</title>
-  <meta name="description" content="Tutoriais simples de TFS, OTClient, AstraClient, Revscriptsys e protocolo em bytes reais.">
+  <meta name="description" content="Wiki completa de TFS, OTClient, AstraClient, Revscriptsys, forge, seguranca e protocolo em bytes reais.">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-page="home">
@@ -14,13 +14,14 @@
     <main class="main">
       <section class="hero">
         <div class="hero-inner">
-          <span class="eyebrow">Open Tibia para iniciantes</span>
+          <span class="eyebrow">Open Tibia do inicio ao avancado</span>
           <h1>Astra Academy</h1>
-          <p class="lede">Uma wiki pratica para entender TFS, OTClient, AstraClient, Lua, C++, Revscriptsys, UI e protocolo sem pular os fundamentos. A primeira versao foi montada a partir do workspace local, da wiki oficial do Revscriptsys e dos relatorios em forge.</p>
+          <p class="lede">Uma wiki pratica e profunda para entender TFS, OTClient, AstraClient, Lua, C++, Revscriptsys, UI, forge, seguranca e protocolo em bytes reais sem pular os fundamentos. O conteudo foi montado a partir do workspace local, da wiki oficial do Revscriptsys, dos relatorios em forge e dos repos do projeto.</p>
           <div class="hero-actions">
             <a class="btn primary" href="tutorials/tfs-introducao.html">Comecar pelo TFS</a>
             <a class="btn" href="tutorials/network-bytes-reais.html">Ver bytes reais</a>
-            <a class="btn" href="tutorials/otclient-modules.html">Criar module</a>
+            <a class="btn" href="tutorials/forge-mapa.html">Mapa do forge</a>
+            <a class="btn" href="README.md">README PT/EN/ES</a>
           </div>
           <div class="hero-grid">
             <article class="card">
@@ -34,6 +35,18 @@
             <article class="card">
               <h3>Protocolo moderno</h3>
               <p>Quando usar JSON, quando migrar para bytes reais e como validar packets no servidor sem confiar no client.</p>
+            </article>
+            <article class="card">
+              <h3>Forge completo</h3>
+              <p>Mapa dos repos, sistemas em <code>data/scripts/network</code>, logs, relatorios, commits e onde estudar cada parte.</p>
+            </article>
+            <article class="card">
+              <h3>Seguranca e debug</h3>
+              <p>Checklist de anti exploit, cooldown, range check, NetworkGuard, logs, Git e validacao antes de publicar.</p>
+            </article>
+            <article class="card">
+              <h3>PT, EN e ES</h3>
+              <p>README trilingue e seletor de idioma no site para navegacao, labels e resumo rapido dos tutoriais.</p>
             </article>
           </div>
         </div>
@@ -80,7 +93,7 @@
         <section class="section">
           <div class="section-head">
             <h2>Paginas principais</h2>
-            <p>Comece por uma trilha e avance quando o conceito ficar claro.</p>
+            <p>Comece por uma trilha, avance para arquitetura e use o forge como referencia real.</p>
           </div>
           <div class="tutorial-grid">
             <a class="tutorial-card" href="tutorials/tfs-revscriptsys.html">
@@ -94,6 +107,18 @@
             <a class="tutorial-card" href="tutorials/network-bytes-reais.html">
               <h3>Bytes reais</h3>
               <p>Entenda por que task board e soulseal sairam de JSON/extended opcode para protocolo binario.</p>
+            </a>
+            <a class="tutorial-card" href="tutorials/network-opcodes-mapa.html">
+              <h3>Mapa de opcodes</h3>
+              <p>Documente direcao, payload, tipos, guardas e fallback para cada packet novo.</p>
+            </a>
+            <a class="tutorial-card" href="tutorials/sistemas-forge.html">
+              <h3>Sistemas do forge</h3>
+              <p>Battle Pass, Market, Prey, Forge, Wheel, Quick Loot e Task Board como estudo real.</p>
+            </a>
+            <a class="tutorial-card" href="tutorials/seguranca-servidor.html">
+              <h3>Seguranca</h3>
+              <p>Client nunca e confiavel: valide opcode, item, storage, dinheiro, range e cooldown no servidor.</p>
             </a>
           </div>
         </section>
