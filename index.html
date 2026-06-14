@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Astra Academy - Open Tibia docs</title>
+  <meta name="description" content="Tutoriais simples de TFS, OTClient, AstraClient, Revscriptsys e protocolo em bytes reais.">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="home">
+  <div id="topbar-slot"></div>
+  <div class="layout">
+    <div id="sidebar-slot"></div>
+    <main class="main">
+      <section class="hero">
+        <div class="hero-inner">
+          <span class="eyebrow">Open Tibia para iniciantes</span>
+          <h1>Astra Academy</h1>
+          <p class="lede">Uma wiki pratica para entender TFS, OTClient, AstraClient, Lua, C++, Revscriptsys, UI e protocolo sem pular os fundamentos. A primeira versao foi montada a partir do workspace local, da wiki oficial do Revscriptsys e dos relatorios em forge.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="tutorials/tfs-introducao.html">Comecar pelo TFS</a>
+            <a class="btn" href="tutorials/network-bytes-reais.html">Ver bytes reais</a>
+            <a class="btn" href="tutorials/otclient-modules.html">Criar module</a>
+          </div>
+          <div class="hero-grid">
+            <article class="card">
+              <h3>TFS sem misterio</h3>
+              <p>Player, Creature, Game, ProtocolGame, LuaScriptInterface, Scheduler, Dispatcher, save e login explicados em linguagem direta.</p>
+            </article>
+            <article class="card">
+              <h3>OTClient na pratica</h3>
+              <p>Modules, .otmod, .otui, g_ui, g_game, callbacks, hotkeys, sidebar e limpeza correta de widgets.</p>
+            </article>
+            <article class="card">
+              <h3>Protocolo moderno</h3>
+              <p>Quando usar JSON, quando migrar para bytes reais e como validar packets no servidor sem confiar no client.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <div class="page">
+        <section class="section">
+          <div class="section-head">
+            <h2>Analise geral do workspace</h2>
+            <p>Foram encontrados servidor, clients, referencias modernas e relatorios locais. O site fica separado em Astra-Code-Academy para nao misturar documentacao com source principal.</p>
+          </div>
+          <div class="repo-grid">
+            <article class="repo-card">
+              <h3>Servidor principal</h3>
+              <p><code>forge/forgottenserver-downgrade-1.8-8.60</code> contem <code>src/</code>, <code>data/</code>, <code>schema.sql</code>, <code>config.lua</code>, RevScriptSys e scripts de rede.</p>
+            </article>
+            <article class="repo-card">
+              <h3>AstraClient</h3>
+              <p><code>forge/AstraClient</code> contem modules modernos, <code>game_protocol</code>, <code>protocolgamesend.cpp</code>, logs e suporte a packets Astra.</p>
+            </article>
+            <article class="repo-card">
+              <h3>Referencias</h3>
+              <p><code>forge/canary</code>, <code>forge/crystalserver-main</code>, <code>forge/mehah</code>, <code>forge/otclientv8 otacademy</code> e <code>Ultralight_-_OTClient</code>.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <h2>Achados importantes</h2>
+            <p>Os arquivos locais mostram uma migracao real de sistemas quentes para protocolo binario.</p>
+          </div>
+          <div class="analysis-box">
+            <ul>
+              <li><code>data/lib/core/packet_handler.lua</code> define <code>PacketHandler</code> e <code>NetworkGuard</code>.</li>
+              <li><code>data/events/scripts/player.lua</code> encaminha <code>Player:onNetworkMessage</code> para <code>PacketHandlers[recvByte]</code>.</li>
+              <li><code>data/scripts/network/task_board/protocol.lua</code> usa bytes reais para task board, soulseals e resource balance.</li>
+              <li><code>src/luanetworkmessage.cpp</code> bloqueia opcodes Astra-only para clients que nao sao AstraClient.</li>
+              <li><code>forge/stress-test-results.html</code> registra 31/31 testes passando, incluindo NetworkMessage 11/11.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <h2>Paginas principais</h2>
+            <p>Comece por uma trilha e avance quando o conceito ficar claro.</p>
+          </div>
+          <div class="tutorial-grid">
+            <a class="tutorial-card" href="tutorials/tfs-revscriptsys.html">
+              <h3>Revscriptsys</h3>
+              <p>Crie <code>data/scripts/astra_hello.lua</code> com uma talkaction <code>/hello</code>.</p>
+            </a>
+            <a class="tutorial-card" href="tutorials/otclient-criar-janela.html">
+              <h3>Module astra_hello</h3>
+              <p>Crie .otmod, .lua e .otui com init, terminate, botao e janela.</p>
+            </a>
+            <a class="tutorial-card" href="tutorials/network-bytes-reais.html">
+              <h3>Bytes reais</h3>
+              <p>Entenda por que task board e soulseal sairam de JSON/extended opcode para protocolo binario.</p>
+            </a>
+          </div>
+        </section>
+
+        <section class="section compact">
+          <div class="callout tip">
+            <strong>Regra da Academy</strong>
+            O client nunca e confiavel. UI pode ajudar, mas validacao de item, dinheiro, storage, cooldown, packet e permissao sempre pertence ao servidor.
+          </div>
+        </section>
+      </div>
+      <div id="footer-slot"></div>
+    </main>
+  </div>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
