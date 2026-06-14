@@ -353,7 +353,10 @@ const NAV_LABELS = {
     "network-opcodes-mapa": "Opcode map",
     "network-migracao-json-bytes": "JSON to bytes migration",
     "seguranca-servidor": "Server security",
-    "build-run-debug": "Build, run and debug"
+    "build-run-debug": "Build, run and debug",
+    "tfs-revscriptsys-completo": "Complete Revscriptsys",
+    "lua-api-tfs": "TFS Lua API",
+    "ia-contexto-tfs": "AI context for TFS"
   },
   es: {
     "logica-programacao": "Logica de programacion",
@@ -394,7 +397,10 @@ const NAV_LABELS = {
     "network-opcodes-mapa": "Mapa de opcodes",
     "network-migracao-json-bytes": "Migracion JSON a bytes",
     "seguranca-servidor": "Seguridad del servidor",
-    "build-run-debug": "Build, ejecutar y debug"
+    "build-run-debug": "Build, ejecutar y debug",
+    "tfs-revscriptsys-completo": "Revscriptsys completo",
+    "lua-api-tfs": "API Lua de TFS",
+    "ia-contexto-tfs": "Contexto IA para TFS"
   }
 };
 
@@ -404,14 +410,16 @@ const GROUP_LABELS = {
     "TFS": "TFS",
     "OTClient e AstraClient": "OTClient and AstraClient",
     "Arquitetura moderna": "Modern architecture",
-    "Forge avancado": "Advanced forge"
+    "Forge avancado": "Advanced forge",
+    "Guias para IA": "AI guides"
   },
   es: {
     "Fundamentos": "Fundamentos",
     "TFS": "TFS",
     "OTClient e AstraClient": "OTClient y AstraClient",
     "Arquitetura moderna": "Arquitectura moderna",
-    "Forge avancado": "Forge avanzado"
+    "Forge avancado": "Forge avanzado",
+    "Guias para IA": "Guias para IA"
   }
 };
 
@@ -815,6 +823,15 @@ NAV_GROUPS.push({
   ]
 });
 
+NAV_GROUPS.push({
+  title: "Guias para IA",
+  items: [
+    ["39", "tfs-revscriptsys-completo", "Revscriptsys completo"],
+    ["40", "lua-api-tfs", "Lua/API TFS"],
+    ["41", "ia-contexto-tfs", "Contexto TFS para IA"]
+  ]
+});
+
 PAGES["tfs-revscriptsys"].sections.push(
   ["Referencia oficial resumida", tableRows(
     ["Metatable", "Quando usar", "Callbacks/metodos importantes"],
@@ -1018,6 +1035,233 @@ PAGES["build-run-debug"] = page(
     ["Logs para olhar", pathRows([["Servidor console", "erros Lua, warnings de script, crash e mensagens de startup"], ["AstraClient/otclientv8.log", "erro de module, OTUI, signal e widget"], ["AstraClient/packet.log", "ordem e conteudo dos packets quando habilitado"], ["forge/stress-test-results.html", "base de comparacao para stress DB/NetworkMessage"], ["GitHub Actions", "build limpo fora da maquina local"]])],
     ["Git limpo", "<p>O repo <code>Astra-Code-Academy</code> deve manter somente documentacao. Alteracoes em <code>forge/forgottenserver...</code> e <code>forge/AstraClient</code> ja existentes nao devem ser revertidas pela documentacao.</p>"],
     ["Quando pedir ajuda da IA", "<p>Inclua erro completo, caminho do arquivo, diff atual, versao do fork, packet/opcode quando houver e o comportamento esperado. Pedido bom economiza horas.</p>"]
+  ]
+);
+
+PAGES["tfs-revscriptsys-completo"] = page(
+  "Revscriptsys completo",
+  "Guia completo em PT-BR baseado na wiki oficial do Revscriptsys e adaptado ao fork local. O objetivo e saber qual metatable usar, onde salvar, quais callbacks existem e como testar sem depender de XML.",
+  ["TFS", "Revscriptsys", "Lua", "Completo"],
+  [
+    ["Fonte oficial e regra base", "<p>A wiki oficial diz que RevScriptSys registra scripts sem XML: coloque Lua em <code>data/scripts/</code> ou subpastas. Scripts de monstros usam <code>data/monster/</code>. O mesmo arquivo pode misturar Action, MoveEvent, GlobalEvent e outras metatables quando o sistema precisa. Fonte: <a href=\"https://github.com/otland/forgottenserver/wiki/Revscriptsys\">otland/forgottenserver Revscriptsys</a>.</p>"],
+    ["Mapa completo das metatables", tableRows(
+      ["Metatable", "Use quando", "Callbacks principais", "Metodos principais"],
+      [
+        ["<code>Action()</code>", "Player usa item, alavanca, bau, ferramenta, quest item.", "<code>onUse(player, item, fromPosition, target, toPosition, isHotkey)</code>", "<code>id</code>, <code>aid</code>, <code>uid</code>, <code>allowFarUse</code>, <code>blockWalls</code>, <code>checkFloor</code>"],
+        ["<code>CreatureEvent(\"name\")</code>", "Evento de player/criatura: login, logout, kill, death, damage, modal, text edit, opcode.", "<code>onLogin</code>, <code>onLogout</code>, <code>onThink</code>, <code>onPrepareDeath</code>, <code>onDeath</code>, <code>onKill</code>, <code>onAdvance</code>, <code>onModalWindow</code>, <code>onTextEdit</code>, <code>onHealthChange</code>, <code>onManaChange</code>, <code>onExtendedOpCode</code>", "<code>register</code>"],
+        ["<code>GlobalEvent(\"name\")</code>", "Rotina global de startup, shutdown, horario, record ou intervalo.", "<code>onThink</code>, <code>onTime</code>, <code>onStartup</code>, <code>onShutdown</code>, <code>onRecord</code>", "<code>time</code>, <code>interval</code>, <code>register</code>"],
+        ["<code>MonsterType(\"name\")</code>", "Criar ou sobrescrever monstro por Lua.", "<code>onThink</code>, <code>onAppear</code>, <code>onDisappear</code>, <code>onMove</code>, <code>onSay</code>", "<code>Game.createMonsterType</code>, flags, stats, attacks, defenses, loot, voices, immunities"],
+        ["<code>MoveEvent()</code>", "Pisar, sair, equipar, desequipar, adicionar/remover item de tile.", "<code>onEquip</code>, <code>onDeEquip</code>, <code>onStepIn</code>, <code>onStepOut</code>, <code>onAddItem</code>, <code>onRemoveItem</code>", "<code>level</code>, <code>magiclevel</code>, <code>slot</code>, <code>id</code>, <code>aid</code>, <code>uid</code>, <code>position</code>, <code>premium</code>, <code>vocation</code>"],
+        ["<code>Spell(\"type\")</code>", "Magia instantanea, rune, monster spell ou spell custom.", "<code>onCastSpell(creature, var, isHotkey)</code>", "<code>name</code>, <code>words</code>, <code>group</code>, <code>vocation</code>, <code>cooldown</code>, <code>level</code>, <code>mana</code>, <code>isPremium</code>, <code>getManaCost</code>, <code>getSoulCost</code>, <code>isLearnable</code>"],
+        ["<code>TalkAction(\"words\")</code>", "Comando de chat para player, tutor, GOD ou debug.", "<code>onSay(player, words, param, type)</code>", "<code>separator</code>, <code>register</code>"],
+        ["<code>Weapon(WEAPON_TYPE)</code>", "Arma custom com Combat/area/formula.", "<code>onUseWeapon(player, variant)</code>", "<code>register</code> e configuracoes do Combat"]
+      ]
+    )],
+    ["Exemplo Action seguro", codeBlock("lua", "data/scripts/actions/astra_reward_chest.lua", [
+      "local CHEST_ACTION_ID = 45001",
+      "local STORAGE_REWARD = 900001",
+      "",
+      "local chest = Action()",
+      "",
+      "function chest.onUse(player, item, fromPosition, target, toPosition, isHotkey)",
+      "    if player:getStorageValue(STORAGE_REWARD) == 1 then",
+      "        player:sendCancelMessage(\"Voce ja pegou esta recompensa.\")",
+      "        return true",
+      "    end",
+      "",
+      "    player:addItem(2160, 1)",
+      "    player:setStorageValue(STORAGE_REWARD, 1)",
+      "    player:sendTextMessage(MESSAGE_EVENT_ADVANCE, \"Recompensa recebida.\")",
+      "    return true",
+      "end",
+      "",
+      "chest:aid(CHEST_ACTION_ID)",
+      "chest:register()"
+    ].join("\n"))],
+    ["Exemplo CreatureEvent login/kill", codeBlock("lua", "data/scripts/creaturescripts/astra_progress.lua", [
+      "local login = CreatureEvent(\"AstraProgressLogin\")",
+      "local kill = CreatureEvent(\"AstraProgressKill\")",
+      "",
+      "function login.onLogin(player)",
+      "    player:registerEvent(\"AstraProgressKill\")",
+      "    player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, \"Astra Progress carregado.\")",
+      "    return true",
+      "end",
+      "",
+      "function kill.onKill(player, target)",
+      "    if not target or not target:isMonster() then",
+      "        return true",
+      "    end",
+      "    player:setStorageValue(900010, math.max(0, player:getStorageValue(900010)) + 1)",
+      "    return true",
+      "end",
+      "",
+      "login:register()",
+      "kill:register()"
+    ].join("\n"))],
+    ["Exemplo GlobalEvent", codeBlock("lua", "data/scripts/globalevents/astra_startup.lua", [
+      "local startup = GlobalEvent(\"AstraStartup\")",
+      "",
+      "function startup.onStartup()",
+      "    print(\"[Astra] Scripts carregados com sucesso.\")",
+      "    return true",
+      "end",
+      "",
+      "startup:register()"
+    ].join("\n"))],
+    ["Exemplo MoveEvent equip", codeBlock("lua", "data/scripts/movements/astra_boots.lua", [
+      "local boots = MoveEvent()",
+      "local ITEM_ID = 2195",
+      "",
+      "function boots.onEquip(player, item, slot, isCheck)",
+      "    if isCheck then",
+      "        return player:getLevel() >= 20",
+      "    end",
+      "    player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, \"Boots equipadas.\")",
+      "    return true",
+      "end",
+      "",
+      "boots:id(ITEM_ID)",
+      "boots:slot(\"feet\")",
+      "boots:register()"
+    ].join("\n"))],
+    ["Exemplo Spell", codeBlock("lua", "data/scripts/spells/astra_flame.lua", [
+      "local combat = Combat()",
+      "combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_FIREDAMAGE)",
+      "combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_FIREAREA)",
+      "",
+      "function onGetFormulaValues(player, level, magicLevel)",
+      "    local min = (level / 5) + (magicLevel * 2) + 20",
+      "    local max = (level / 5) + (magicLevel * 4) + 40",
+      "    return -min, -max",
+      "end",
+      "",
+      "combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, \"onGetFormulaValues\")",
+      "",
+      "local spell = Spell(\"instant\")",
+      "function spell.onCastSpell(creature, variant)",
+      "    return combat:execute(creature, variant)",
+      "end",
+      "spell:name(\"Astra Flame\")",
+      "spell:words(\"exevo astra flam\")",
+      "spell:level(20)",
+      "spell:mana(80)",
+      "spell:cooldown(2000)",
+      "spell:groupCooldown(2000)",
+      "spell:register()"
+    ].join("\n"))],
+    ["Exemplo TalkAction", codeBlock("lua", "data/scripts/talkactions/astra_where.lua", [
+      "local where = TalkAction(\"/where\")",
+      "",
+      "function where.onSay(player, words, param, type)",
+      "    local pos = player:getPosition()",
+      "    player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, string.format(\"x=%d y=%d z=%d\", pos.x, pos.y, pos.z))",
+      "    return false",
+      "end",
+      "",
+      "where:separator(\" \")",
+      "where:register()"
+    ].join("\n"))],
+    ["Exemplo Weapon", codeBlock("lua", "data/scripts/weapons/astra_bolt.lua", [
+      "local combat = Combat()",
+      "combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_PHYSICALDAMAGE)",
+      "combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_BOLT)",
+      "combat:setFormula(COMBAT_FORMULA_SKILL, 0, 0, 1, 0)",
+      "",
+      "local weapon = Weapon(WEAPON_AMMO)",
+      "function weapon.onUseWeapon(player, variant)",
+      "    if player:getSkull() == SKULL_BLACK then",
+      "        return false",
+      "    end",
+      "    return combat:execute(player, variant)",
+      "end",
+      "weapon:register()"
+    ].join("\n"))],
+    ["Checklist para outra IA", "<ol><li>Preferir <code>data/scripts/</code> para sistema novo.</li><li>Usar um registrador por callback/metatable.</li><li>Manter config no topo, helper local no meio e <code>:register()</code> no fim.</li><li>Validar player, target, item, storage, permissao e cooldown no servidor.</li><li>Procurar script vizinho do mesmo tipo antes de inventar API.</li><li>Quando envolver client, documentar opcode e payload em <code>docs/ai/AI_NETWORK_PROTOCOL_MAP.md</code>.</li></ol>"]
+  ]
+);
+
+PAGES["lua-api-tfs"] = page(
+  "Lua/API TFS",
+  "Mapa pratico da API Lua usada no fork: classes C++ expostas para Lua, libs em data/lib, padroes de script e exemplos que outra IA pode reutilizar.",
+  ["Lua", "API", "TFS", "IA"],
+  [
+    ["Onde a API nasce", pathRows([["src/luascript.cpp", "registra enums, classes, metodos e funcoes globais para Lua"], ["src/lua*.cpp", "arquivos por classe: player, item, creature, game, networkmessage, spells, actions"], ["data/lib/core/", "extensoes Lua para Player, Game, Item, Position, Quest, TaskBoard e helpers"], ["data/lib/compat/compat.lua", "funcoes antigas estilo TFS 0.x/1.x para scripts legados"], ["data/scripts/", "uso real da API em RevScriptSys"]])],
+    ["Classes e quando usar", tableRows(
+      ["Classe/API", "Serve para", "Arquivos importantes"],
+      [
+        ["<code>Player</code>", "Inventario, storage, premium, mensagens, vocacao, skill, client flags, extended opcode.", "<code>src/luaplayer.cpp</code>, <code>data/lib/core/player.lua</code>"],
+        ["<code>Creature</code>", "Vida, posicao, dano, speed, summon, conditions.", "<code>src/luacreature.cpp</code>, <code>data/lib/core/creature.lua</code>"],
+        ["<code>Game</code>", "Players online, criar item/monster/npc/tile, storage global, world state, raids.", "<code>src/luagame.cpp</code>, <code>data/lib/core/game.lua</code>"],
+        ["<code>Item/ItemType/Container</code>", "IDs, atributos, count, actionid, uniqueid, containers e transform.", "<code>src/luaitem.cpp</code>, <code>src/luaitemtype.cpp</code>, <code>src/luacontainer.cpp</code>"],
+        ["<code>NetworkMessage</code>", "Serializar bytes reais para o client ou ler payload do client.", "<code>src/luanetworkmessage.cpp</code>, <code>data/lib/core/packet_handler.lua</code>"],
+        ["<code>Combat/Condition</code>", "Spells, damage, heal, conditions, formulas e areas.", "<code>src/luacombat.cpp</code>, <code>src/luacondition.cpp</code>"],
+        ["<code>ModalWindow</code>", "Janela modal do client classico.", "<code>src/luamodalwindow.cpp</code>"],
+        ["<code>Position/Tile</code>", "Coordenadas, tile, itens do tile, teleport, effects.", "<code>src/luaposition.cpp</code>, <code>src/luatile.cpp</code>"]
+      ]
+    )],
+    ["Padrao de script seguro", codeBlock("lua", "template de script TFS seguro", [
+      "local config = {",
+      "    storage = 910000,",
+      "    cooldownMs = 500,",
+      "}",
+      "",
+      "local function canUse(player)",
+      "    if not player or not player:isPlayer() then",
+      "        return false",
+      "    end",
+      "    if player:getLevel() < 8 then",
+      "        player:sendCancelMessage(\"Level insuficiente.\")",
+      "        return false",
+      "    end",
+      "    return true",
+      "end",
+      "",
+      "local action = TalkAction(\"/astra\")",
+      "function action.onSay(player, words, param)",
+      "    if not canUse(player) then",
+      "        return false",
+      "    end",
+      "    player:setStorageValue(config.storage, os.time())",
+      "    player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, \"OK\")",
+      "    return false",
+      "end",
+      "",
+      "action:separator(\" \")",
+      "action:register()"
+    ].join("\n"))],
+    ["NetworkMessage minimo", codeBlock("lua", "server -> client bytes", [
+      "local out = NetworkMessage(player)",
+      "out:addByte(0xA7)",
+      "out:addByte(1)",
+      "out:addU16(player:getLevel())",
+      "out:addString(player:getName())",
+      "out:sendToPlayer(player)"
+    ].join("\n"))],
+    ["Funcoes perigosas", "<ul><li><code>Game.getSpectators</code>: util, mas caro se usado em loop grande.</li><li><code>Game.createItem</code>: item temporario precisa ser movido para container/tile ou removido.</li><li><code>db.query</code>: nunca concatenar entrada do player sem escape.</li><li><code>addEvent</code>: nao guarde userdata por muito tempo sem revalidar objeto pelo id.</li><li><code>NetworkMessage:get*</code>: leia somente depois de checar tamanho com <code>NetworkGuard</code>.</li></ul>"],
+    ["Documentos .md gerados", pathRows([["docs/ai/AI_TFS_CONTEXT.md", "mapa geral do servidor para IA"], ["docs/ai/AI_TFS_FILE_MAP.md", "pastas e arquivos com responsabilidade"], ["docs/ai/AI_TFS_FULL_INVENTORY.md", "inventario de pastas, grupos C++, libs Lua, events e network"], ["docs/ai/AI_REVSCRIPTSYS_COMPLETE.md", "guia completo RevScriptSys"], ["docs/ai/AI_LUA_API_AND_PATTERNS.md", "API Lua e padroes seguros"], ["docs/ai/AI_NETWORK_PROTOCOL_MAP.md", "opcodes, NetworkGuard e bytes reais"], ["docs/ai/AI_CHANGE_PLAYBOOK.md", "roteiro para mexer sem quebrar"]])]
+  ]
+);
+
+PAGES["ia-contexto-tfs"] = page(
+  "Contexto TFS para IA",
+  "Pagina feita para uma IA abrir antes de alterar codigo. Ela aponta quais documentos ler, qual repo e dono de cada camada, e qual checklist seguir antes de commitar.",
+  ["IA", "TFS", "Docs", "Manutencao"],
+  [
+    ["Como outra IA deve comecar", "<ol><li>Ler <code>docs/ai/AI_TFS_CONTEXT.md</code>.</li><li>Identificar se a mudanca e server, client, protocolo, banco ou docs.</li><li>Ler o arquivo vizinho mais parecido.</li><li>Fazer patch pequeno.</li><li>Rodar checks possiveis.</li><li>Atualizar docs quando mexer em opcode, storage, config ou fluxo.</li></ol>"],
+    ["Mapa de donos", tableRows(
+      ["Mudanca", "Repo/pasta", "Documento de apoio"],
+      [
+        ["Regra de jogo", "<code>forge/forgottenserver-downgrade-1.8-8.60/data/scripts</code>", "<code>AI_TFS_FILE_MAP.md</code>"],
+        ["Motor C++", "<code>forge/forgottenserver-downgrade-1.8-8.60/src</code>", "<code>AI_TFS_CONTEXT.md</code>"],
+        ["API Lua", "<code>src/lua*.cpp</code> e <code>data/lib</code>", "<code>AI_LUA_API_AND_PATTERNS.md</code>"],
+        ["Protocolo", "<code>src/protocolgame.cpp</code>, <code>data/scripts/network</code>, <code>AstraClient/modules/game_protocol</code>", "<code>AI_NETWORK_PROTOCOL_MAP.md</code>"],
+        ["RevScriptSys", "<code>data/scripts</code>", "<code>AI_REVSCRIPTSYS_COMPLETE.md</code>"],
+        ["Processo de alteracao", "qualquer repo", "<code>AI_CHANGE_PLAYBOOK.md</code>"]
+      ]
+    )],
+    ["Links diretos dos .md", pathRows([["../docs/ai/AI_TFS_CONTEXT.md", "Contexto geral"], ["../docs/ai/AI_TFS_FILE_MAP.md", "Mapa de arquivos"], ["../docs/ai/AI_TFS_FULL_INVENTORY.md", "Inventario completo"], ["../docs/ai/AI_REVSCRIPTSYS_COMPLETE.md", "RevScriptSys completo"], ["../docs/ai/AI_LUA_API_AND_PATTERNS.md", "Lua/API"], ["../docs/ai/AI_NETWORK_PROTOCOL_MAP.md", "Network/opcodes"], ["../docs/ai/AI_CHANGE_PLAYBOOK.md", "Playbook de mudanca"]])],
+    ["Regra final", "<div class=\"callout warn\"><strong>Antes de alterar</strong> Se a IA nao sabe qual lado e dono da verdade, pare e leia o mapa. UI ajuda o player, mas regra, recompensa, storage, dinheiro, cooldown e validacao ficam no servidor.</div>"]
   ]
 );
 

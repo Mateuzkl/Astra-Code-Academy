@@ -19,9 +19,15 @@
           <p class="lede">Uma wiki pratica e profunda para entender TFS, OTClient, AstraClient, Lua, C++, Revscriptsys, UI, forge, seguranca e protocolo em bytes reais sem pular os fundamentos. O conteudo foi montado a partir do workspace local, da wiki oficial do Revscriptsys, dos relatorios em forge e dos repos do projeto.</p>
           <div class="hero-actions">
             <a class="btn primary" href="tutorials/tfs-introducao.html">Comecar pelo TFS</a>
-            <a class="btn" href="tutorials/network-bytes-reais.html">Ver bytes reais</a>
-            <a class="btn" href="tutorials/forge-mapa.html">Mapa do forge</a>
+            <a class="btn" href="tutorials/tfs-revscriptsys-completo.html">Revscriptsys completo</a>
+            <a class="btn" href="tutorials/ia-contexto-tfs.html">Contexto para IA</a>
             <a class="btn" href="README.md">README PT/EN/ES</a>
+          </div>
+          <div class="metric-strip">
+            <div><strong>42</strong><span>paginas navegaveis</span></div>
+            <div><strong>7</strong><span>docs .md para IA</span></div>
+            <div><strong>4145</strong><span>scripts Lua mapeados</span></div>
+            <div><strong>251</strong><span>arquivos C++/headers</span></div>
           </div>
           <div class="hero-grid">
             <article class="card">
@@ -76,6 +82,35 @@
 
         <section class="section">
           <div class="section-head">
+            <h2>Trilhas de estudo</h2>
+            <p>Escolha a trilha pelo que voce quer alterar. Cada uma aponta para o lado certo do projeto.</p>
+          </div>
+          <div class="lane-grid">
+            <a class="lane" href="tutorials/tfs-revscriptsys-completo.html">
+              <span>01</span>
+              <h3>Scripts TFS</h3>
+              <p>RevScriptSys completo, Actions, TalkActions, CreatureEvents, GlobalEvents, Movements, Spells e Weapons.</p>
+            </a>
+            <a class="lane" href="tutorials/lua-api-tfs.html">
+              <span>02</span>
+              <h3>Lua/API</h3>
+              <p>Player, Game, Item, Creature, Combat, NetworkMessage, data/lib e padroes seguros.</p>
+            </a>
+            <a class="lane" href="tutorials/network-opcodes-mapa.html">
+              <span>03</span>
+              <h3>Bytes reais</h3>
+              <p>PacketHandler, NetworkGuard, opcodes, Task Board, AstraClient e migracao de JSON para bytes.</p>
+            </a>
+            <a class="lane" href="tutorials/ia-contexto-tfs.html">
+              <span>04</span>
+              <h3>IA mexendo no TFS</h3>
+              <p>Mapas em Markdown para outra IA entender pasta, arquivo, risco, fluxo e checklist de mudanca.</p>
+            </a>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
             <h2>Achados importantes</h2>
             <p>Os arquivos locais mostram uma migracao real de sistemas quentes para protocolo binario.</p>
           </div>
@@ -120,6 +155,22 @@
               <h3>Seguranca</h3>
               <p>Client nunca e confiavel: valide opcode, item, storage, dinheiro, range e cooldown no servidor.</p>
             </a>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <h2>Docs para outra IA</h2>
+            <p>Arquivos Markdown diretos, feitos para serem colados ou abertos por outra IA antes de alterar o TFS.</p>
+          </div>
+          <div class="doc-list">
+            <a href="docs/ai/AI_TFS_CONTEXT.md"><strong>AI_TFS_CONTEXT.md</strong><span>Contexto geral do servidor, camadas, fluxo de login e packet custom.</span></a>
+            <a href="docs/ai/AI_TFS_FILE_MAP.md"><strong>AI_TFS_FILE_MAP.md</strong><span>Mapa de pastas, arquivos e sistemas em data/scripts/network.</span></a>
+            <a href="docs/ai/AI_TFS_FULL_INVENTORY.md"><strong>AI_TFS_FULL_INVENTORY.md</strong><span>Inventario de pastas, grupos C++, libs Lua, events e network.</span></a>
+            <a href="docs/ai/AI_REVSCRIPTSYS_COMPLETE.md"><strong>AI_REVSCRIPTSYS_COMPLETE.md</strong><span>Action, CreatureEvent, GlobalEvent, MonsterType, MoveEvent, Spell, TalkAction e Weapon.</span></a>
+            <a href="docs/ai/AI_LUA_API_AND_PATTERNS.md"><strong>AI_LUA_API_AND_PATTERNS.md</strong><span>API Lua, classes expostas, padroes seguros e exemplos.</span></a>
+            <a href="docs/ai/AI_NETWORK_PROTOCOL_MAP.md"><strong>AI_NETWORK_PROTOCOL_MAP.md</strong><span>NetworkGuard, PacketHandler, opcodes e contrato de bytes reais.</span></a>
+            <a href="docs/ai/AI_CHANGE_PLAYBOOK.md"><strong>AI_CHANGE_PLAYBOOK.md</strong><span>Roteiro de alteracao, checklist de seguranca e checks antes do commit.</span></a>
           </div>
         </section>
 

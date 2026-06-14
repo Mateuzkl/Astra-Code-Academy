@@ -46,6 +46,7 @@ O conteudo tambem considera a wiki oficial do Revscriptsys:
 - Migracao JSON -> bytes.
 - Seguranca do servidor e anti exploit.
 - Build, run, debug, logs e Git.
+- Pacote `docs/ai` para outra IA entender e alterar o TFS.
 
 ### Bytes reais vs JSON/extended opcode
 
@@ -97,8 +98,30 @@ Astra-Code-Academy/
     img/
   components/
   docs/
+    ai/
+      AI_TFS_CONTEXT.md
+      AI_TFS_FILE_MAP.md
+      AI_TFS_FULL_INVENTORY.md
+      AI_REVSCRIPTSYS_COMPLETE.md
+      AI_LUA_API_AND_PATTERNS.md
+      AI_NETWORK_PROTOCOL_MAP.md
+      AI_CHANGE_PLAYBOOK.md
   tutorials/
 ```
+
+### Docs para outra IA
+
+Os arquivos abaixo foram criados para uma IA abrir antes de mexer no TFS:
+
+| Arquivo | Uso |
+| --- | --- |
+| `docs/ai/AI_TFS_CONTEXT.md` | Contexto geral do servidor, camadas, fluxo de login e packet custom. |
+| `docs/ai/AI_TFS_FILE_MAP.md` | Mapa de pastas, arquivos e sistemas. |
+| `docs/ai/AI_TFS_FULL_INVENTORY.md` | Inventario de pastas, grupos C++, libs Lua, events e scripts de network. |
+| `docs/ai/AI_REVSCRIPTSYS_COMPLETE.md` | Guia completo RevScriptSys baseado na wiki oficial e adaptado ao fork. |
+| `docs/ai/AI_LUA_API_AND_PATTERNS.md` | API Lua, classes, padroes seguros e exemplos. |
+| `docs/ai/AI_NETWORK_PROTOCOL_MAP.md` | OpCodes, PacketHandler, NetworkGuard e bytes reais. |
+| `docs/ai/AI_CHANGE_PLAYBOOK.md` | Checklist para alterar, testar, documentar e commitar. |
 
 ### Como rodar local
 
@@ -155,6 +178,7 @@ Primary focus:
 - Client/server communication.
 - Real byte protocol instead of heavy JSON extended opcodes.
 - Security, debugging, build workflow, and Git workflow.
+- A `docs/ai` package with context, file maps, full inventory, RevScriptSys, Lua API, network protocol and change checklist for another AI.
 
 Main source repositories inspected:
 
@@ -230,6 +254,7 @@ Temas principales:
 - Comunicacion cliente/servidor.
 - Protocolo con bytes reales en vez de JSON/extended opcode pesado.
 - Seguridad, debug, build, logs y Git.
+- Paquete `docs/ai` con contexto, mapa de archivos, inventario completo, RevScriptSys, API Lua, protocolo de red y checklist para otra IA.
 
 Repos principales revisados:
 

@@ -11,6 +11,7 @@
   --yellow: #eab308;
   --red: #ef4444;
   --violet: #a78bfa;
+  --orange: #fb923c;
   --code-bg: #0b0e14;
   --radius: 8px;
   --sidebar: 292px;
@@ -29,7 +30,9 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(34, 197, 94, 0.05), transparent 240px),
+    var(--bg);
   color: var(--text);
   font-size: 15px;
   line-height: 1.65;
@@ -48,6 +51,11 @@ input {
 code,
 pre {
   font-family: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+}
+
+:not(pre) > code {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .topbar {
@@ -244,7 +252,8 @@ pre {
   padding: 48px 32px 24px;
   border-bottom: 1px solid var(--line);
   background:
-    linear-gradient(180deg, rgba(56, 189, 248, 0.08), transparent 42%),
+    linear-gradient(180deg, rgba(56, 189, 248, 0.12), transparent 44%),
+    linear-gradient(90deg, rgba(34, 197, 94, 0.08), transparent 55%),
     var(--bg);
 }
 
@@ -294,6 +303,36 @@ h1 {
   margin-top: 28px;
 }
 
+.metric-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 28px;
+  max-width: 940px;
+}
+
+.metric-strip div {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.025);
+  padding: 12px;
+}
+
+.metric-strip strong {
+  display: block;
+  color: var(--green);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.metric-strip span {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -319,10 +358,15 @@ h1 {
 .hero-grid,
 .card-grid,
 .repo-grid,
-.tutorial-grid {
+.tutorial-grid,
+.lane-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
+}
+
+.lane-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .hero-grid {
@@ -358,6 +402,7 @@ h1 {
 .repo-card,
 .tutorial-card,
 .mini-card,
+.lane,
 .callout,
 .code-block,
 .analysis-box {
@@ -370,6 +415,7 @@ h1 {
 .repo-card,
 .tutorial-card,
 .mini-card,
+.lane,
 .analysis-box {
   padding: 18px;
 }
@@ -377,7 +423,8 @@ h1 {
 .card h3,
 .repo-card h3,
 .tutorial-card h3,
-.mini-card h3 {
+.mini-card h3,
+.lane h3 {
   margin: 0 0 8px;
   font-size: 17px;
 }
@@ -385,9 +432,67 @@ h1 {
 .card p,
 .repo-card p,
 .tutorial-card p,
-.mini-card p {
+.mini-card p,
+.lane p {
   color: var(--muted);
   margin: 0;
+}
+
+.lane {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background:
+    linear-gradient(180deg, rgba(56, 189, 248, 0.07), transparent),
+    var(--panel);
+}
+
+.lane span {
+  width: 38px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #061017;
+  background: var(--green);
+  font-weight: 900;
+  font-size: 12px;
+}
+
+.lane:hover,
+.tutorial-card:hover,
+.repo-card:hover {
+  border-color: rgba(56, 189, 248, 0.55);
+  transform: translateY(-2px);
+}
+
+.doc-list {
+  display: grid;
+  gap: 10px;
+}
+
+.doc-list a {
+  display: grid;
+  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 14px 16px;
+}
+
+.doc-list a:hover {
+  border-color: rgba(34, 197, 94, 0.55);
+}
+
+.doc-list strong {
+  color: var(--blue);
+}
+
+.doc-list span {
+  color: var(--muted);
 }
 
 .repo-card code,
@@ -413,7 +518,7 @@ h1 {
 }
 
 .content {
-  max-width: 900px;
+  max-width: 980px;
 }
 
 .content-header {
@@ -433,6 +538,8 @@ h1 {
 
 .content h2 {
   margin-top: 42px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(45, 53, 72, 0.7);
 }
 
 .content h3 {
@@ -705,6 +812,8 @@ pre code {
   .card-grid,
   .repo-grid,
   .tutorial-grid,
+  .lane-grid,
+  .metric-strip,
   .summary-grid {
     grid-template-columns: 1fr;
   }
@@ -716,6 +825,7 @@ pre code {
   }
 
   .path-row,
+  .doc-list a,
   .pagination {
     grid-template-columns: 1fr;
   }
